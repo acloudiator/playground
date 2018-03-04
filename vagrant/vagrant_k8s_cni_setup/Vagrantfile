@@ -1,0 +1,132 @@
+$script = <<SCRIPT
+mkdir $HOME/kernel-4.15
+cd $HOME/kernel-4.15
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.15/linux-headers-4.15.0-041500_4.15.0-041500.201802011154_all.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.15/linux-headers-4.15.0-041500-generic_4.15.0-041500.201802011154_amd64.deb
+wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.15/linux-image-4.15.0-041500-generic_4.15.0-041500.201802011154_amd64.deb
+sudo dpkg -i *.deb
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+sudo add-apt-repository "deb https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+sudo apt-get update && sudo apt-get install -y docker-ce=$(apt-cache madison docker-ce | grep 17.03 | head -1 | awk '{print $3}')
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo cd /var/lib/docker
+sudo rm -rvf aufs
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", inline: $script
+
+  config.vm.define "mastercalico" do |mastercalico|
+    mastercalico.vm.box = "ubuntu/xenial64"
+    mastercalico.vm.provision :shell, inline: "hostname mastercalico.local && reboot"
+  end
+
+  config.vm.define "worker1calico" do |worker1calico|
+    worker1calico.vm.box = "ubuntu/xenial64"
+    worker1calico.vm.provision :shell, inline: "hostname worker1calico.local && reboot"
+  end
+
+  config.vm.define "worker2calico" do |worker2calico|
+    worker2calico.vm.box = "ubuntu/xenial64"
+    worker2calico.vm.provision :shell, inline: "hostname worker2calico.local && reboot"
+  end
+
+  config.vm.define "mastercanal" do |mastercanal|
+    mastercanal.vm.box = "ubuntu/xenial64"
+    mastercanal.vm.provision :shell, inline: "hostname mastercanal.local && reboot"
+  end
+
+  config.vm.define "worker1canal" do |worker1canal|
+    worker1canal.vm.box = "ubuntu/xenial64"
+    worker1canal.vm.provision :shell, inline: "hostname worker1canal.local && reboot"
+  end
+
+  config.vm.define "worker2canal" do |worker2canal|
+    worker2canal.vm.box = "ubuntu/xenial64"
+    worker2canal.vm.provision :shell, inline: "hostname worker2canal.local && reboot"
+  end
+
+  config.vm.define "masterflannel" do |masterflannel|
+    masterflannel.vm.box = "ubuntu/xenial64"
+    masterflannel.vm.provision :shell, inline: "hostname masterflannel.local && reboot"
+  end
+
+  config.vm.define "worker1flannel" do |worker1flannel|
+    worker1flannel.vm.box = "ubuntu/xenial64"
+    worker1flannel.vm.provision :shell, inline: "hostname worker1flannel.local && reboot"
+  end
+
+  config.vm.define "worker2flannel" do |worker2flannel|
+    worker2flannel.vm.box = "ubuntu/xenial64"
+    worker2flannel.vm.provision :shell, inline: "hostname worker2flannel.local && reboot"
+  end
+
+  config.vm.define "masterkuberouter" do |masterkuberouter|
+    masterkuberouter.vm.box = "ubuntu/xenial64"
+    masterkuberouter.vm.provision :shell, inline: "hostname masterkuberouter.local && reboot"
+  end
+
+  config.vm.define "worker1kuberouter" do |worker1kuberouter|
+    worker1kuberouter.vm.box = "ubuntu/xenial64"
+    worker1kuberouter.vm.provision :shell, inline: "hostname worker1kuberouter.local && reboot"
+  end
+
+  config.vm.define "worker2kuberouter" do |worker2kuberouter|
+    worker2kuberouter.vm.box = "ubuntu/xenial64"
+    worker2kuberouter.vm.provision :shell, inline: "hostname worker2kuberouter.local && reboot"
+  end
+
+  config.vm.define "masterromana" do |masterromana|
+    masterromana.vm.box = "ubuntu/xenial64"
+    masterromana.vm.provision :shell, inline: "hostname masterromana.local && reboot"
+  end
+
+  config.vm.define "worker1romana" do |worker1romana|
+    worker1romana.vm.box = "ubuntu/xenial64"
+    worker1romana.vm.provision :shell, inline: "hostname worker1romana.local && reboot"
+  end
+
+  config.vm.define "worker2romana" do |worker2romana|
+    worker2romana.vm.box = "ubuntu/xenial64"
+    worker2romana.vm.provision :shell, inline: "hostname worker2romana.local && reboot"
+  end
+
+  config.vm.define "masterweavenet" do |masterweavenet|
+    masterweavenet.vm.box = "ubuntu/xenial64"
+    masterweavenet.vm.provision :shell, inline: "hostname masterweavenet.local && reboot"
+  end
+
+  config.vm.define "worker1weavenet" do |worker1weavenet|
+    worker1weavenet.vm.box = "ubuntu/xenial64"
+    worker1weavenet.vm.provision :shell, inline: "hostname worker1weavenet.local && reboot"
+  end
+
+  config.vm.define "worker2weavenet" do |worker2weavenet|
+    worker2weavenet.vm.box = "ubuntu/xenial64"
+    worker2weavenet.vm.provision :shell, inline: "hostname worker2weavenet.local && reboot"
+  end
+
+  config.vm.define "mastercilium" do |mastercilium|
+    mastercilium.vm.box = "ubuntu/xenial64"
+    mastercilium.vm.provision :shell, inline: "hostname mastercilium.local && reboot"
+  end
+
+  config.vm.define "worker1cilium" do |worker1cilium|
+    worker1cilium.vm.box = "ubuntu/xenial64"
+    worker1cilium.vm.provision :shell, inline: "hostname worker1cilium.local && reboot"
+  end
+
+  config.vm.define "worker2cilium" do |worker2cilium|
+    worker2cilium.vm.box = "ubuntu/xenial64"
+    worker2cilium.vm.provision :shell, inline: "hostname worker2cilium.local && reboot"
+  end
+
+end
