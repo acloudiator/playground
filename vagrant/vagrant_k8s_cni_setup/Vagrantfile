@@ -22,34 +22,25 @@ SCRIPT
 Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: $script
 
-  config.vm.define "masterother" do |masterother|
-    masterother.vm.box = "ubuntu/xenial64"
-    masterother.vm.provision :shell, inline: "hostname masterother.local && reboot"
+  config.vm.define "master" do |master|
+  config.vm.network :forwarded_port, guest: 6443, host: 64430, host_ip: "0.0.0.0"
+  config.vm.network "public_network", ip: "192.168.1.10"
+    master.vm.box = "ubuntu/xenial64"
+    master.vm.provision :shell, inline: "hostname master.local && reboot"
   end
 
-  config.vm.define "worker1other" do |worker1other|
-    worker1other.vm.box = "ubuntu/xenial64"
-    worker1other.vm.provision :shell, inline: "hostname worker1other.local && reboot"
+  config.vm.define "worker1" do |worker1|
+  config.vm.network "public_network", ip: "192.168.1.11"
+  config.vm.network :forwarded_port, guest: 6443, host: 64431, host_ip: "0.0.0.0"
+    worker1.vm.box = "ubuntu/xenial64"
+    worker1.vm.provision :shell, inline: "hostname worker1.local && reboot"
   end
 
-  config.vm.define "worker2other" do |worker2other|
-    worker2other.vm.box = "ubuntu/xenial64"
-    worker2other.vm.provision :shell, inline: "hostname worker2other.local && reboot"
-  end
-
-  config.vm.define "masteriovnet" do |masteriovnet|
-    masteriovnet.vm.box = "ubuntu/xenial64"
-    masteriovnet.vm.provision :shell, inline: "hostname masteriovnet.local && reboot"
-  end
-
-  config.vm.define "worker1iovnet" do |worker1iovnet|
-    worker1iovnet.vm.box = "ubuntu/xenial64"
-    worker1iovnet.vm.provision :shell, inline: "hostname worker1iovnet.local && reboot"
-  end
-
-  config.vm.define "worker2iovnet" do |worker2iovnet|
-    worker2iovnet.vm.box = "ubuntu/xenial64"
-    worker2iovnet.vm.provision :shell, inline: "hostname worker2iovnet.local && reboot"
+  config.vm.define "worker2" do |worker2|
+  config.vm.network "private_network", ip: "10.0.2.12"
+  config.vm.network :forwarded_port, guest: 6443, host: 64432, host_ip: "0.0.0.0"
+    worker2.vm.box = "ubuntu/xenial64"
+    worker2.vm.provision :shell, inline: "hostname worker2.local && reboot"
   end
 
 end
